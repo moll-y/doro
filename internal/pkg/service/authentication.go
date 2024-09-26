@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"log"
-	"moll-y.io/doro/internal/domain"
+	"moll-y.io/doro/internal/pkg/domain"
 )
 
 type AuthenticationService struct {

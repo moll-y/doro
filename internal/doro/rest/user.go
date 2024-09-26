@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"moll-y.io/doro/internal/api/service"
+	"moll-y.io/doro/internal/pkg/service"
 )
 
 type UserController struct {

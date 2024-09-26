@@ -1,13 +1,14 @@
 package main
 
 import (
-	"log"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"moll-y.io/doro/internal/api/controller"
-	"moll-y.io/doro/internal/api/service"
-	"moll-y.io/doro/internal/infrastructure/repository"
+	"log"
+	"moll-y.io/doro/internal/doro/rest"
+	repository "moll-y.io/doro/internal/pkg/repository/sqlite"
+	"moll-y.io/doro/internal/pkg/service"
+	"strings"
 )
 
 func main() {
@@ -15,17 +16,17 @@ func main() {
 	if err != nil {
 		panic("failde to connect database")
 	}
-  router := gin.Default()
-  router.Use(func (c *gin.Context) {
-    header := c.GetHeader("Authorization")
-    if !strings.HasPrefix(header, "Bearer ") {
-      log.Println("no bearer")
-      return
-    }
-    jwt := strings.TrimPrefixeaderauthHeader, "Bearer ")
-    c.Set("jwt", jwt)
-    c.Next()
-  })
+	router := gin.Default()
+	router.Use(func(c *gin.Context) {
+		header := c.GetHeader("Authorization")
+		if !strings.HasPrefix(header, "Bearer ") {
+			log.Println("no bearer")
+			return
+		}
+		jwt := strings.TrimPrefix(header, "Bearer ")
+		c.Set("jwt", jwt)
+		c.Next()
+	})
 	ur := &repository.UserRepository{DB: db}
 	us := &service.UserService{UserRepository: ur}
 	uc := &controller.UserController{Router: router, UserService: us}

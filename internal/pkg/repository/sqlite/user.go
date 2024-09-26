@@ -2,7 +2,7 @@ package repository
 
 import (
 	"gorm.io/gorm"
-	"moll-y.io/doro/internal/domain"
+	"moll-y.io/doro/internal/pkg/domain"
 )
 
 type UserRepository struct {

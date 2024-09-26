@@ -2,7 +2,7 @@ package service
 
 import (
 	"log"
-	"moll-y.io/doro/internal/domain"
+	"moll-y.io/doro/internal/pkg/domain"
 )
 
 type UserService struct {
