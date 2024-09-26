@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -14,13 +15,23 @@ func main() {
 	if err != nil {
 		panic("failde to connect database")
 	}
-	r := gin.Default()
+  router := gin.Default()
+  router.Use(func (c *gin.Context) {
+    header := c.GetHeader("Authorization")
+    if !strings.HasPrefix(header, "Bearer ") {
+      log.Println("no bearer")
+      return
+    }
+    jwt := strings.TrimPrefixeaderauthHeader, "Bearer ")
+    c.Set("jwt", jwt)
+    c.Next()
+  })
 	ur := &repository.UserRepository{DB: db}
 	us := &service.UserService{UserRepository: ur}
-	uc := &controller.UserController{Router: r, UserService: us}
+	uc := &controller.UserController{Router: router, UserService: us}
 	as := &service.AuthenticationService{UserRepository: ur}
-	ac := &controller.AuthenticationController{Router: r, AuthenticationService: as}
+	ac := &controller.AuthenticationController{Router: router, AuthenticationService: as}
 	uc.Route()
 	ac.Route()
-	r.Run()
+	router.Run()
 }
