@@ -18,6 +18,12 @@ func main() {
 	}
 	db.AutoMigrate(&domain.User{})
 	db.AutoMigrate(&domain.Organization{})
+	db.AutoMigrate(&domain.User{}, &domain.Organization{}, &domain.OrganizationMember{})
+	user := domain.User{Name: "Alice"}
+	org := domain.Organization{Name: "TechCorp"}
+	member := domain.OrganizationMember{User: user, Organization: org, Role: "Admin"}
+	db.Create(&member)
+
 	ur := &repository.UserRepository{DB: db}
 	or := &repository.OrganizationRepository{DB: db}
 	us := &service.UserService{UserRepository: ur}
