@@ -18,30 +18,20 @@ func (oc *OrganizationController) Route() {
 }
 
 func (oc *OrganizationController) CreateOrganization(c *gin.Context) {
-	actor, ok := c.Get("actor")
-	if !ok {
+	actor, _ := c.Get("actor")
+	if actor == nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Permission denied."})
 		return
 	}
 	cord := dto.CreateOrganizationRequestDto{}
-	if err := c.ShouldBindBodyWith(&cord, binding.JSON); err == nil {
-		org, err := oc.OrganizationService.CreateOrganization(actor, cord.Name, cord.Description)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, org)
+	if err := c.ShouldBindBodyWith(&cord, binding.JSON); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request."})
 		return
 	}
-	iord := dto.ImportOrganizationRequestDto{}
-	if err := c.ShouldBindBodyWith(&iord, binding.JSON); err == nil {
-		org, err := oc.OrganizationService.ImportOrganization(actor, iord.Source)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-			return
-		}
-		c.JSON(http.StatusOK, org)
+	org, err := oc.OrganizationService.CreateOrganization(actor.(int), cord.Name, cord.Description)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request."})
+	c.JSON(http.StatusOK, org)
 }

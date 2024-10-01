@@ -2,32 +2,32 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"log"
+	"moll-y.io/doro/internal/pkg/service"
 	"strings"
 )
 
-func AuthenticationMiddleware() gin.HandlerFunc {
+type AuthenticationMiddleware struct {
+	AuthenticationService *service.AuthenticationService
+}
+
+func (am *AuthenticationMiddleware) Middleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		header := c.GetHeader("Authorization")
 		if !strings.HasPrefix(header, "Bearer ") {
 			log.Println(`header "Authorization" is missing.`)
 			c.Set("actor", nil)
 			c.Next()
+			return
 		}
-		s := strings.TrimPrefix(header, "Bearer ")
-		var claims struct {
-			Actor string `json:"actor"`
-			jwt.RegisteredClaims
-		}
-		t, err := jwt.ParseWithClaims(s, &claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte("secret"), nil
-		})
-		if err != nil || !t.Valid {
+		jwt := strings.TrimPrefix(header, "Bearer ")
+		actor, err := am.AuthenticationService.Parse(jwt)
+		if err != nil {
 			c.Set("actor", nil)
 			c.Next()
+			return
 		}
-		c.Set("actor", claims.Actor)
+		c.Set("actor", actor)
 		c.Next()
 	}
 }

@@ -9,7 +9,7 @@ type OrganizationRepository struct {
 	DB *gorm.DB
 }
 
-func (or *OrganizationRepository) CreateUser(name, description string, seatsAvailable, seatsOccupied int) (*domain.Organization, error) {
+func (or *OrganizationRepository) CreateOrganization(name, description string, seatsAvailable, seatsOccupied int) (*domain.Organization, error) {
 	org := &domain.Organization{
 		Name:           name,
 		Description:    description,

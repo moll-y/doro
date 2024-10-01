@@ -1,7 +1,8 @@
 package service
 
 import (
-	"github.com/golang-jwt/jwt/v5"
+	"errors"
+	jwtv5 "github.com/golang-jwt/jwt/v5"
 	"log"
 	"moll-y.io/doro/internal/pkg/domain"
 )
@@ -16,14 +17,11 @@ func (as *AuthenticationService) Authenticate(email, password string) (string, e
 		log.Println(err)
 		return "", err
 	}
-	log.Println(user)
-	if user.Password != password {
-		log.Println("password incorrect")
-		return "", err
+	if user == nil || user.Password != password {
+		return "", errors.New("Email or password incorrect.")
 	}
-	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+	t := jwtv5.NewWithClaims(jwtv5.SigningMethodHS256, jwtv5.MapClaims{
 		"actor": user.ID,
-		"role":  user.Role,
 	})
 	s, err := t.SignedString([]byte("secret"))
 	if err != nil {
@@ -31,4 +29,21 @@ func (as *AuthenticationService) Authenticate(email, password string) (string, e
 		return "", err
 	}
 	return s, nil
+}
+
+func (as *AuthenticationService) Parse(jwt string) (int, error) {
+	var claims struct {
+		Actor int `json:"actor"`
+		jwtv5.RegisteredClaims
+	}
+	t, err := jwtv5.ParseWithClaims(jwt, &claims, func(token *jwtv5.Token) (interface{}, error) {
+		return []byte("secret"), nil
+	})
+	if err != nil {
+		return 0, nil
+	}
+	if !t.Valid {
+		return 0, errors.New("JWT is invalid.")
+	}
+	return claims.Actor, nil
 }
