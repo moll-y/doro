@@ -4,11 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
 	"moll-y.io/doro/internal/doro/rest"
+	"moll-y.io/doro/internal/doro/rest/middleware"
 	repository "moll-y.io/doro/internal/pkg/repository/sqlite"
 	"moll-y.io/doro/internal/pkg/service"
-	"strings"
 )
 
 func main() {
@@ -17,16 +16,7 @@ func main() {
 		panic("failde to connect database")
 	}
 	router := gin.Default()
-	router.Use(func(c *gin.Context) {
-		header := c.GetHeader("Authorization")
-		if !strings.HasPrefix(header, "Bearer ") {
-			log.Println("no bearer")
-			return
-		}
-		jwt := strings.TrimPrefix(header, "Bearer ")
-		c.Set("jwt", jwt)
-		c.Next()
-	})
+	router.Use(middleware.AuthenticationMiddleware())
 	ur := &repository.UserRepository{DB: db}
 	us := &service.UserService{UserRepository: ur}
 	uc := &controller.UserController{Router: router, UserService: us}

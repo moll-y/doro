@@ -8,7 +8,7 @@ import (
 )
 
 type AuthenticationController struct {
-	Router                *gin.Engine
+	Router                gin.IRoutes
 	AuthenticationService *service.AuthenticationService
 }
 
@@ -19,13 +19,13 @@ func (ac *AuthenticationController) Route() {
 func (ac *AuthenticationController) Authenticate(c *gin.Context) {
 	request := dto.AuthenticationRequestDto{}
 	if err := c.ShouldBind(&request); err != nil {
-		c.String(http.StatusOK, `the body should be formA`)
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request."})
 		return
 	}
-	token, err := ac.AuthenticationService.Authenticate(request.Email, request.Password)
+	t, err := ac.AuthenticationService.Authenticate(request.Email, request.Password)
 	if err != nil {
-		c.JSON(200, gin.H{"message": "wrong credentials"})
+		c.JSON(200, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"token": token})
+	c.JSON(200, gin.H{"jwt": t})
 }

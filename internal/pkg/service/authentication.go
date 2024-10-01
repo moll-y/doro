@@ -21,17 +21,14 @@ func (as *AuthenticationService) Authenticate(email, password string) (string, e
 		log.Println("password incorrect")
 		return "", err
 	}
-	// Create a new token object, specifying signing method and the claims you
-	// would like it to contain.
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":   user.ID,
-		"role": user.Role,
+		"actor": user.ID,
+		"role":  user.Role,
 	})
-	// Sign and get the complete encoded token as a string using the secret
-	ts, err := t.SignedString([]byte("secret"))
+	s, err := t.SignedString([]byte("secret"))
 	if err != nil {
 		log.Println(err)
 		return "", err
 	}
-	return ts, nil
+	return s, nil
 }

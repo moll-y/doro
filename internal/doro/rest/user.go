@@ -6,7 +6,7 @@ import (
 )
 
 type UserController struct {
-	Router      *gin.Engine
+	Router      gin.IRoutes
 	UserService *service.UserService
 }
 
