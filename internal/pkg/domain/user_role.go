@@ -3,6 +3,7 @@ package domain
 type Role int
 
 const (
-	A Role = iota
-	B
+	ORGANIZATION_ADMIN int = iota
+	PROJECT_LEADER
+	COLLABORATOR
 )

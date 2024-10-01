@@ -17,15 +17,15 @@ func (ac *AuthenticationController) Route() {
 }
 
 func (ac *AuthenticationController) Authenticate(c *gin.Context) {
-	request := dto.AuthenticationRequestDto{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "Bad request."})
+	body := dto.AuthenticateUserRequestDto{}
+	if err := c.ShouldBind(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	t, err := ac.AuthenticationService.Authenticate(request.Email, request.Password)
+	t, err := ac.AuthenticationService.Authenticate(body.Email, body.Password)
 	if err != nil {
-		c.JSON(200, gin.H{"message": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"jwt": t})
+	c.JSON(http.StatusOK, gin.H{"jwt": t})
 }

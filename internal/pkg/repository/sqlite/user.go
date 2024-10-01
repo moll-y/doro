@@ -9,6 +9,15 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
+func (ur *UserRepository) CreateUser(name, email, password string) (*domain.User, error) {
+	user := &domain.User{Name: name, Email: email, Password: password}
+	r := ur.DB.Create(&user)
+	if r.Error != nil {
+		return nil, r.Error
+	}
+	return user, nil
+}
+
 func (ur *UserRepository) FindUserByEmail(email string) (*domain.User, error) {
 	user := &domain.User{}
 	r := ur.DB.First(user, "email = ?", email)
