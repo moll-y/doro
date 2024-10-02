@@ -29,14 +29,14 @@ func main() {
 	us := &service.UserService{UserRepository: ur}
 	as := &service.AuthenticationService{UserRepository: ur}
 	os := &service.OrganizationService{UserRepository: ur, OrganizationRepository: or}
+	am := &middleware.AuthenticationMiddleware{AuthenticationService: as}
 	r := gin.Default()
+	r.Use(am.Middleware())
 	ac := &controller.AuthenticationController{Router: r, AuthenticationService: as}
 	oc := &controller.OrganizationController{Router: r, OrganizationService: os}
 	uc := &controller.UserController{Router: r, UserService: us}
-	am := &middleware.AuthenticationMiddleware{AuthenticationService: as}
 	uc.Route()
 	ac.Route()
 	oc.Route()
-	r.Use(am.Middleware())
 	r.Run()
 }

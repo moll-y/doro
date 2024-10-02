@@ -12,5 +12,5 @@ type Organization struct {
 	Description    string
 	SeatsAvailable int
 	SeatsOccupied  int
-	members        []*OrganizationMember
+	Members        []*OrganizationMember
 }
