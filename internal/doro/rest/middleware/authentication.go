@@ -16,14 +16,12 @@ func (am *AuthenticationMiddleware) Middleware() gin.HandlerFunc {
 		header := c.GetHeader("Authorization")
 		if !strings.HasPrefix(header, "Bearer ") {
 			log.Println(`header "Authorization" is missing.`)
-			c.Set("actor", nil)
 			c.Next()
 			return
 		}
 		jwt := strings.TrimPrefix(header, "Bearer ")
 		actor, err := am.AuthenticationService.Parse(jwt)
 		if err != nil {
-			c.Set("actor", nil)
 			c.Next()
 			return
 		}

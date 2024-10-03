@@ -18,8 +18,8 @@ func (oc *OrganizationController) Route() {
 }
 
 func (oc *OrganizationController) CreateOrganization(c *gin.Context) {
-	actor, _ := c.Get("actor")
-	if actor == nil {
+	actor, ok := c.Get("actor")
+	if !ok {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Permission denied."})
 		return
 	}

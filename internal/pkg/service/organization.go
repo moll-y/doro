@@ -18,12 +18,3 @@ func (os *OrganizationService) CreateOrganization(actor int, name, description s
 	}
 	return org, nil
 }
-
-func (os *OrganizationService) ImportOrganization(actor int, source string) (*domain.Organization, error) {
-	org, err := os.OrganizationRepository.CreateOrganization(source, "left right left", 0, 0)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return org, nil
-}
