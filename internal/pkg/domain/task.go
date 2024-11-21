@@ -3,8 +3,8 @@ package domain
 import "gorm.io/gorm"
 
 type TaskRepository interface {
-	UpdateTask(task *Task) error
-	FindTasks() ([]*Task, error)
+	UpdateTask() (*Task, error)
+	FindTasks() (*[]Task, error)
 }
 
 type Task struct {

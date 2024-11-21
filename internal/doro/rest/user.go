@@ -14,6 +14,7 @@ type UserController struct {
 
 func (uc *UserController) Route() {
 	uc.Router.POST("/users", uc.CreateUser)
+	uc.Router.GET("/users", uc.FindUser)
 }
 
 func (uc *UserController) CreateUser(c *gin.Context) {
@@ -23,6 +24,16 @@ func (uc *UserController) CreateUser(c *gin.Context) {
 		return
 	}
 	user, err := uc.UserService.CreateUser(body.Name, body.Email, body.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, user)
+}
+
+func (uc *UserController) FindUser(c *gin.Context) {
+	email := c.Query("email")
+	user, err := uc.UserService.FindUserByEmail(email)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return

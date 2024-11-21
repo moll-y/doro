@@ -3,7 +3,7 @@ package domain
 import "gorm.io/gorm"
 
 type BacklogRepository interface {
-	FindBacklogs() ([]*Backlog, error)
+	FindBacklogs() (*[]Backlog, error)
 }
 
 type Backlog struct {
